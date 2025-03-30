@@ -1,0 +1,6 @@
+# 忽略.idea
+.idea/
+
+# 忽略编译生成文件
+cmake-build-debug/
+cmake-build-release/
