@@ -7,8 +7,6 @@
 #include "AudioInput.h"
 #include "TextRenderer.h"
 
-//
-
 class GLCore : public QOpenGLWidget
 {
     Q_OBJECT
@@ -28,7 +26,10 @@ public:
 
     // 帧率控制
     void setFrameRate(double fps);
-    double getFrameRate() const;
+    double getFrameRate();
+    // 帧率表
+    static QMap<QString, double> getFrameRateMap();
+    static QStringList getFrameRateList();
 
     void playAudioTest();
 
@@ -70,12 +71,15 @@ private:
             如果某些成员变量的初始化依赖于其他成员变量的状态
             ，而它们的实际初始化顺序与预期不符，可能会导致未定义行为或其他意外问题。
         我感觉这不一定是根本原因，谁能告诉我到底发生了啥？？？
+
+        2025.3.30(Misaki): 上述问题已经解决，原因是isLeftPressed与isRightPressed
+        这两个成员变量没有初始化，导致其值是随机的，进而产生bug
      */
-    double frameRate = 60.0;
-    /// 帧率
+
+    double frameRate = 60.0;        /// 帧率
+    static QMap<QString, double> frameRateMap; /// 帧率映射表
     QTimer* frameTimer;             /// 帧控制定时器
     Menu *contextMenu;              /// 使用 Menu 类
-    AudioInput *audioInput;         /// 音频录制类
     AudioOutput *audioOutput;       /// 音频播放类
     bool isLeftPressed;             /// 鼠标左键是否按下
     bool isRightPressed;            /// 鼠标右键是否按下

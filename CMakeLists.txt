@@ -93,7 +93,11 @@ add_executable(${PROJECT_NAME} ${CON}
         USER_SOURCE/Setting/Inc/UISetting.h
         USER_SOURCE/Setting/Src/UISetting.cpp
         USER_SOURCE/Setting/Inc/AudioPage.h
-        USER_SOURCE/Setting/Src/AudioPage.cpp)
+        USER_SOURCE/Setting/Src/AudioPage.cpp
+        USER_SOURCE/Setting/Inc/RenderPage.h
+        USER_SOURCE/Setting/Src/RenderPage.cpp
+        AppContext.h
+)
 
 
 # 根据编译选项来自动编译出Debug或是Release版

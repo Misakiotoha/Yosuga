@@ -19,7 +19,7 @@
 #include "socketmanager.h"
 
 #include "AudioOutput.h"
-#include "AudioInput.h"
+
 
 
 class Menu : public ElaMenu
@@ -51,7 +51,6 @@ private:
     QAction *sendFileAction;
     QAction *startExchangeAction;   /// 开启对话
 
-    AudioInput *audioInput;         /// 音频录制类
     AudioOutput *audioOutput;       /// 音频播放类
 
 

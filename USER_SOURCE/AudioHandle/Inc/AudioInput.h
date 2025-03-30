@@ -19,21 +19,28 @@
 /**
  * @brief  录音模块
  * @author Misaki
- *
+ * 单例类
+ * 移植Qt6需注意，Qt6的QAudioRecorder类已废弃，使用QMediaRecorder代替
  */
 class AudioInput : public QAudioRecorder
 {
 Q_OBJECT
 
-
-public:
-
+private:
     /**
      * @brief  构造函数
      * @param parent
      */
     AudioInput(QObject *parent = nullptr);
 
+    static AudioInput* instance;
+
+public:
+    /**
+     * @brief  获取实例
+     * @return AudioInput*
+     */
+    static AudioInput* getInstance();
     /**
      * @brief  析构函数
      */

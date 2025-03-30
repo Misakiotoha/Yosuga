@@ -5,6 +5,7 @@
 #include <QTimer>
 
 #include "TextRenderer.h"
+#include "AudioInput.h"
 
 Menu::Menu(QWidget *parent)
         : ElaMenu(parent)
@@ -156,11 +157,10 @@ void Menu::toggleTheme()
 void Menu::startExchange()
 {
     // 初始化一些必要的类以及必要的设置
-    audioInput = new AudioInput();
     audioOutput = new AudioOutput();
 
     // 列出所有音频输入设备
-    QList<QString> devices = audioInput->getAvailableAudioInputDevices();
+    QList<QString> devices = AudioInput::getAvailableAudioInputDevices();
     qDebug() << "可用录音设备:";
     for (const QString &device : devices) {
         qDebug() << device;
@@ -169,16 +169,16 @@ void Menu::startExchange()
     // 设置当前录音设备（假设选择第一个设备）
     if (!devices.isEmpty()) {
         qDebug() << "选择的录音设备是: " << devices.first();
-        audioInput->setAudioInputDevice(devices.first());
-        qDebug() << "当前录音设备: " << audioInput->audioInput();  // 检查当前录音设备
+        AudioInput::getInstance()->setAudioInputDevice(devices.first());
+        qDebug() << "当前录音设备: " << AudioInput::getInstance()->audioInput();  // 检查当前录音设备
     }
 
     // 第一次需要主动录音来启动 信号与槽状态机(FSM)
     qDebug() << "开始录音";
-    audioInput->startAutoStopAudio();
+    AudioInput::getInstance()->startAutoStopAudio();
 
     // 检查录音状态
-    if (audioInput->state() == QMediaRecorder::RecordingState) {
+    if (AudioInput::getInstance()->state() == QMediaRecorder::RecordingState) {
         qDebug() << "录音已启动";
     } else {
         qDebug() << "录音启动失败";
@@ -201,10 +201,10 @@ void Menu::startExchange()
     // 当播放完成后继续开始录音
     connect(audioOutput, &AudioOutput::playbackFinished, [this]() {
         qDebug() << "开始录音";
-        audioInput->startAutoStopAudio();
+        AudioInput::getInstance()->startAutoStopAudio();
 
         // 检查录音状态
-        if (audioInput->state() == QMediaRecorder::RecordingState) {
+        if (AudioInput::getInstance()->state() == QMediaRecorder::RecordingState) {
             qDebug() << "录音已启动";
         } else {
             qDebug() << "录音启动失败";
@@ -213,7 +213,7 @@ void Menu::startExchange()
 
     // 上传录音
     // 当录音完成时，发送wav文件
-    connect(audioInput, &AudioInput::recordingFinished_Byte, [this](const QByteArray &wavData) {
+    connect(AudioInput::getInstance(), &AudioInput::recordingFinished_Byte, [this](const QByteArray &wavData) {
         qDebug() << "录音完成，开始上传录音文件...";
         if (wavData.isEmpty()) {
             qWarning() << "录音数据为空！";

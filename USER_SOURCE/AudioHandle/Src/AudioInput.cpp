@@ -5,6 +5,16 @@
 #include <QtMath>
 #include "AudioInput.h"
 
+AudioInput *AudioInput::instance = nullptr;
+AudioInput *AudioInput::getInstance()
+{
+    // 懒汉式
+    if (instance == nullptr) {
+        instance = new AudioInput();
+    }
+    return instance;
+}
+
 AudioInput::AudioInput(QObject *parent) : QAudioRecorder(parent)
 {
     // new一些必要的对象

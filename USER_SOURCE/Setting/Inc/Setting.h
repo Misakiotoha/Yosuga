@@ -15,6 +15,7 @@
 #include "NetworkPage.h"
 #include "UISetting.h"
 #include "AudioPage.h"
+#include "RenderPage.h"
 class Setting : public ElaWindow
 {
 Q_OBJECT
@@ -45,6 +46,7 @@ private:
     NetWorkPage *networkPage;
     UISetting *uiSetting;
     AudioPage *audioPage;
+    RenderPage *renderPage;
 
     // 节点键值
     QString basePageKey;

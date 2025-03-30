@@ -6,10 +6,10 @@
 
 AudioOutput::AudioOutput(QObject *parent) : QMediaPlayer(parent)
 {
-    thread = new QThread(this);
+//    thread = new QThread(this);
     audioBuffer = new QBuffer(this); // 初始化缓冲区
-    // 将对象移动到子线程中
-    this->moveToThread(thread);
+//    // 将对象移动到子线程中
+//    this->moveToThread(thread);
 
     // 监听媒体状态变化
     connect(this, &QMediaPlayer::mediaStatusChanged, [this](QMediaPlayer::MediaStatus status) {
@@ -18,10 +18,10 @@ AudioOutput::AudioOutput(QObject *parent) : QMediaPlayer(parent)
         }
     });
     // 连接线程的 started 信号到 initialize 方法
-    connect(thread, &QThread::started, this, &AudioOutput::initialize);
+//    connect(thread, &QThread::started, this, &AudioOutput::initialize);
 
     // 启动子线程
-    thread->start();
+//    thread->start();
 }
 
 
@@ -31,12 +31,12 @@ AudioOutput::~AudioOutput()
     this->stopAudio();
     delete audioBuffer; // 释放缓冲区
 
-    // 退出子线程
-    thread->quit();
-    thread->wait();
+//    // 退出子线程
+//    thread->quit();
+//    thread->wait();
 
     // 释放资源
-    delete thread;
+//    delete thread;
 }
 
 /**

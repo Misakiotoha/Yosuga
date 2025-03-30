@@ -150,7 +150,7 @@ signals:
 
 private:
     QUrl url;                   /// <!音频文件路径
-    QThread *thread;            /// <!子线程
+//    QThread *thread;            /// <!子线程
     QBuffer *audioBuffer;       /// <!存储内存数据
 };
 

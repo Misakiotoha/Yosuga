@@ -66,6 +66,7 @@ void Setting::initPages()
     networkPage = new NetWorkPage(this);
     uiSetting = new UISetting(this);
     audioPage = new AudioPage(this);
+    renderPage = new RenderPage(this);
 }
 
 void Setting::initNavigationBar()
@@ -80,6 +81,8 @@ void Setting::initNavigationBar()
     addPageNode("连接设置", networkPage, ElaIconType::NetworkWired);
     // 添加音频设置节点
     addPageNode("音频设置", audioPage,  ElaIconType::MusicNote);
+    // 添加渲染设置节点
+    addPageNode("渲染设置", renderPage,  ElaIconType::ArrowsRotate);
 
     QString expanderKey2;
     this->addExpanderNode("高级", expanderKey2, ElaIconType::Paintbrush);

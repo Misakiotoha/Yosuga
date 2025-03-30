@@ -13,6 +13,17 @@
 #include <QFont>
 #include <QApplication>
 #include <QFontDatabase>
+#include <algorithm>
+
+#include "AppContext.h"
+QMap<QString, double> GLCore::frameRateMap = {
+    {"30", 30.0},
+    {"60", 60.0},
+    {"120", 120.0},
+    {"144", 144.0},
+    {"165", 165.0},
+    {"240", 240.0}
+};
 
 GLCore::GLCore(int w, int h, QWidget *parent)
     : QOpenGLWidget(parent),
@@ -41,7 +52,6 @@ GLCore::GLCore(int w, int h, QWidget *parent)
     // new一些必要的对象
     contextMenu = new Menu();
     audioOutput = new AudioOutput();
-    audioInput = new AudioInput();
 
     // 设置窗口大小
     setFixedSize(w, h);
@@ -76,12 +86,15 @@ GLCore::GLCore(int w, int h, QWidget *parent)
     connect(contextMenu, &Menu::startPlay, this, &GLCore::playAudioTest);
 
 
+    // 注册当前实例到中介类
+    AppContext::RegisterGLCore(this);
 }
 
 
 GLCore::~GLCore()
 {
-
+    // 注销实例
+    AppContext::UnregisterGLCore();
 }
 
 void GLCore::playAudioTest()
@@ -115,11 +128,31 @@ void GLCore::setFrameRate(double fps)
 }
 
 // 获取当前帧率
-double GLCore::getFrameRate() const
+double GLCore::getFrameRate()
 {
     return frameRate;
 }
 
+QMap<QString, double> GLCore::getFrameRateMap()
+{
+    return frameRateMap;
+}
+
+QStringList GLCore::getFrameRateList()
+{
+    // 将 frameRateMap中的String部分转换为 QStringList
+    QStringList frameRateList;
+    for (auto it = frameRateMap.begin(); it != frameRateMap.end(); ++it) {
+        frameRateList.append(it.key());
+    }
+    // 将frameRateList的数字字符从小到大排序
+    std::sort(frameRateList.begin(), frameRateList.end(), [](const QString& a, const QString& b) {
+        return a.toDouble() < b.toDouble();
+    });
+    // 将60放在第一个位置
+    std::swap(frameRateList[0], frameRateList[frameRateList.indexOf("60")]);
+    return frameRateList;
+}
 
 /**
  * 关闭窗口
@@ -143,14 +176,12 @@ void GLCore::closeEvent(QCloseEvent* event)
 
 void GLCore::mouseMoveEvent(QMouseEvent* event)
 {
-//    qDebug() << "GLCore::mouseMoveEvent" << event->x() << event->y();
     LAppDelegate::GetInstance()->GetView()->OnTouchesMoved(event->x(), event->y());
 
     if (isLeftPressed) {
         QPoint newPos = event->globalPos() - currentPos;
         this->move(newPos);
     }
-
 }
 
 void GLCore::mousePressEvent(QMouseEvent* event)
