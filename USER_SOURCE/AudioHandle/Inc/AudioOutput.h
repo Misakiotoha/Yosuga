@@ -13,6 +13,7 @@
 /**
  * @brief 音频播放模块
  * @author Misaki
+ * 单例类
  * 本模块基于Qt5当中的Multimedia中的QMediaPlayer模块二次封装了一些用于音频播放的操作
  * 实现的功能
  * 1. 设定传入的音频文件路径
@@ -31,13 +32,16 @@
 class AudioOutput : public QMediaPlayer
 {
 Q_OBJECT
-
-public:
+private:
     /**
-     * 构造函数
+     * 构造函数私有化
      * @param parent
      */
     AudioOutput(QObject *parent = nullptr);
+
+    static AudioOutput *instance;
+public:
+    static AudioOutput *getInstance();
 
     /**
      * 析构函数
@@ -150,7 +154,6 @@ signals:
 
 private:
     QUrl url;                   /// <!音频文件路径
-//    QThread *thread;            /// <!子线程
     QBuffer *audioBuffer;       /// <!存储内存数据
 };
 

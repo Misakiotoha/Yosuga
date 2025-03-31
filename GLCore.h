@@ -3,9 +3,6 @@
 #include <QtWidgets/QWidget>
 #include <QOpenGLWidget>
 #include "menu.h"
-#include "AudioOutput.h"
-#include "AudioInput.h"
-#include "TextRenderer.h"
 
 class GLCore : public QOpenGLWidget
 {
@@ -80,7 +77,6 @@ private:
     static QMap<QString, double> frameRateMap; /// 帧率映射表
     QTimer* frameTimer;             /// 帧控制定时器
     Menu *contextMenu;              /// 使用 Menu 类
-    AudioOutput *audioOutput;       /// 音频播放类
     bool isLeftPressed;             /// 鼠标左键是否按下
     bool isRightPressed;            /// 鼠标右键是否按下
     QPoint currentPos;              /// 当前鼠标位置

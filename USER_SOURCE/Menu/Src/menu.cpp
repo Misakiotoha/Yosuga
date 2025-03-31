@@ -6,6 +6,7 @@
 
 #include "TextRenderer.h"
 #include "AudioInput.h"
+#include "AudioOutput.h"
 
 Menu::Menu(QWidget *parent)
         : ElaMenu(parent)
@@ -156,9 +157,6 @@ void Menu::toggleTheme()
 
 void Menu::startExchange()
 {
-    // 初始化一些必要的类以及必要的设置
-    audioOutput = new AudioOutput();
-
     // 列出所有音频输入设备
     QList<QString> devices = AudioInput::getAvailableAudioInputDevices();
     qDebug() << "可用录音设备:";
@@ -190,8 +188,8 @@ void Menu::startExchange()
     // 当完整接受wav文件后播放相关的wav文件
     connect(SocketManager::getInstance(), &SocketManager::revWavFileFinish, [this](const QString &filePath, const QString &response, const float duration) {
         LAppLive2DManager::GetInstance()->StartLipSync(filePath.toUtf8().constData());
-        audioOutput->setAudioPath(filePath);
-        audioOutput->playAudio();
+        AudioOutput::getInstance()->setAudioPath(filePath);
+        AudioOutput::getInstance()->playAudio();
         TextRenderer::getInstance()->addText(response, 40.0f, QColor("#FF69B4"), duration);
     });
 
@@ -199,7 +197,7 @@ void Menu::startExchange()
 
     // 开始录音
     // 当播放完成后继续开始录音
-    connect(audioOutput, &AudioOutput::playbackFinished, [this]() {
+    connect(AudioOutput::getInstance(), &AudioOutput::playbackFinished, [this]() {
         qDebug() << "开始录音";
         AudioInput::getInstance()->startAutoStopAudio();
 

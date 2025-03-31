@@ -15,6 +15,8 @@
 #include <QFontDatabase>
 #include <algorithm>
 
+#include "TextRenderer.h"
+#include "AudioOutput.h"
 #include "AppContext.h"
 QMap<QString, double> GLCore::frameRateMap = {
     {"30", 30.0},
@@ -51,7 +53,6 @@ GLCore::GLCore(int w, int h, QWidget *parent)
 
     // new一些必要的对象
     contextMenu = new Menu();
-    audioOutput = new AudioOutput();
 
     // 设置窗口大小
     setFixedSize(w, h);
@@ -62,8 +63,6 @@ GLCore::GLCore(int w, int h, QWidget *parent)
     TextRenderer::getInstance()->setGravity(600.0f);     // 更快的下坠速度
     TextRenderer::getInstance()->setDampFactor(0.85f);   // 更强的弹性效果
 
-
-    //this->setAttribute(Qt::WA_DeleteOnClose);       // 窗口关闭时自动释放内存
     this->setWindowFlag(Qt::FramelessWindowHint); // 设置无边框窗口
     this->setWindowFlag(Qt::WindowStaysOnTopHint); // 设置窗口始终在顶部
     this->setWindowFlag(Qt::Tool); // 隐藏应用程序图标
@@ -108,8 +107,8 @@ void GLCore::playAudioTest()
     TextRenderer::getInstance()->addText(text, 40.0f, QColor("#FF69B4"), duration);
 
     LAppLive2DManager::GetInstance()->StartLipSync("test.wav");
-    audioOutput->setAudioPath("test.wav");
-    audioOutput->playAudio();
+    AudioOutput::getInstance()->setAudioPath("test.wav");
+    AudioOutput::getInstance()->playAudio();
 }
 
 // 帧率设置
@@ -176,7 +175,10 @@ void GLCore::closeEvent(QCloseEvent* event)
 
 void GLCore::mouseMoveEvent(QMouseEvent* event)
 {
-    LAppDelegate::GetInstance()->GetView()->OnTouchesMoved(event->x(), event->y());
+    LAppDelegate::GetInstance()->GetView()->OnTouchesMoved(
+            event->x(),
+            event->y()
+            );
 
     if (isLeftPressed) {
         QPoint newPos = event->globalPos() - currentPos;
@@ -186,7 +188,10 @@ void GLCore::mouseMoveEvent(QMouseEvent* event)
 
 void GLCore::mousePressEvent(QMouseEvent* event)
 {
-    LAppDelegate::GetInstance()->GetView()->OnTouchesBegan(event->x(), event->y());
+    LAppDelegate::GetInstance()->GetView()->OnTouchesBegan(
+            event->x(),
+            event->y()
+            );
 
     if (event->button() == Qt::LeftButton) {
         this->isLeftPressed = true;
@@ -205,7 +210,10 @@ void GLCore::mousePressEvent(QMouseEvent* event)
 
 void GLCore::mouseReleaseEvent(QMouseEvent* event)
 {
-    LAppDelegate::GetInstance()->GetView()->OnTouchesEnded(event->x(), event->y());
+    LAppDelegate::GetInstance()->GetView()->OnTouchesEnded(
+            event->x(),
+            event->y()
+            );
 
     if (event->button() == Qt::LeftButton) {
         isLeftPressed = false;
@@ -219,8 +227,6 @@ void GLCore::mouseReleaseEvent(QMouseEvent* event)
 void GLCore::initializeGL()
 {
     LAppDelegate::GetInstance()->Initialize(this);
-    
-    // 选择模型
 }
 
 void GLCore::paintGL()

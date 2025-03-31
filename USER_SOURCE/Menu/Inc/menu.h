@@ -18,10 +18,6 @@
 #include "networkmanager.h"
 #include "socketmanager.h"
 
-#include "AudioOutput.h"
-
-
-
 class Menu : public ElaMenu
 {
 Q_OBJECT
@@ -50,8 +46,6 @@ private:
     QAction *socketCloseAction;
     QAction *sendFileAction;
     QAction *startExchangeAction;   /// 开启对话
-
-    AudioOutput *audioOutput;       /// 音频播放类
 
 
     QAction *settingsAction;    /// 设置
