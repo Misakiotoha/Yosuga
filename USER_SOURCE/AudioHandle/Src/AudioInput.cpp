@@ -33,7 +33,7 @@ AudioInput::AudioInput(QObject *parent) : QAudioRecorder(parent)
     connect(silenceTimer, &QTimer::timeout, this, &AudioInput::stopAudio);
     // 连接阈值检测定时器的 timeout 信号到 thresholdTimeout 方法
     connect(thresholdTimer, &QTimer::timeout, this, &AudioInput::thresholdTimeout);
-
+    thresholdTimer->setSingleShot(true);    // 设置为单次触发
     // 连接探测器到 processBuffer 方法
     connect(probe, &QAudioProbe::audioBufferProbed, this, &AudioInput::processBuffer);
 
@@ -124,6 +124,22 @@ void AudioInput::thresholdTimeout()
     if (thresholdTimer->isActive()) {
         thresholdTimer->stop();
     }
+    if (!this->rmsValues.empty()){
+        // 求和
+        double sumT = std::accumulate(rmsValues.begin(), rmsValues.end(), 0.0);
+        // 求平均
+        double avgT = sumT / rmsValues.size();
+        this->silenceThreshold = avgT + 500.0;
+        // 清空缓存
+        rmsValues.clear();
+        // 发射最优静音阈值
+        emit thresholdCalculated(this->silenceThreshold);
+    }
+    else{
+        // 否则发射0作为静音阈值
+        emit thresholdCalculated(0);
+    }
+
 }
 
 // 开始录音并设置定时器
@@ -183,7 +199,7 @@ void AudioInput::startAutoThresholdClu(int Duration)
     }
 
     // 启动定时器
-    QTimer::singleShot(100, this, [&]() {
+    QTimer::singleShot(100, this, [this, Duration]() {
         thresholdTimer->start(Duration);
     });
 
@@ -223,10 +239,10 @@ void AudioInput::processBuffer(const QAudioBuffer& buffer)
         const char *datas = buffer.constData<char>();
         rawPCMData.append(datas, buffer.byteCount());
 
-        qDebug() << "RMS 音量：" << rmsValue;
+        qDebug() << "RMS 音量：" << this->rmsValue;
 
         // 判断是否静音
-        if (rmsValue < this->silenceThreshold) {
+        if (this->rmsValue < this->silenceThreshold) {
             // 如果静音，启动或继续定时器
             if (!silenceTimer->isActive()) {
                 silenceTimer->start(silenceDuration);
@@ -239,15 +255,15 @@ void AudioInput::processBuffer(const QAudioBuffer& buffer)
     }
     if(this->isAutoThreshold){  // 阈值检测
         // 得到当前实时的RMS值通过信号发射出去，如何处理交给绑定这个信号的槽函数
+        rmsValues.push_back(rmsValue);  // 添加到vector当中
         qDebug() << "RMS 音量：" << rmsValue;
         emit rmsRealValue(rmsValue);    // 一般用于实时阈值显示
     }
-
 }
 
 qreal AudioInput::calculateRMS(const QAudioBuffer& buffer)
 {
-    qreal rmsValue = 0;
+    qreal rmsValueT = 0;
 
     const qint16* data = buffer.constData<qint16>();
     int sampleCount = buffer.sampleCount();
@@ -256,13 +272,13 @@ qreal AudioInput::calculateRMS(const QAudioBuffer& buffer)
 
     // 计算平方和
     for (int i = 0; i < sampleCount; ++i) {
-        rmsValue += static_cast<qreal>(data[i]) * data[i];
+        rmsValueT += static_cast<qreal>(data[i]) * data[i];
     }
 
     // 计算均方根
-    rmsValue = qSqrt(rmsValue / sampleCount);
+    rmsValueT = qSqrt(rmsValueT / sampleCount);
 
-    return rmsValue;
+    return rmsValueT;
 }
 
 // 获取所有音频输入设备
@@ -316,4 +332,14 @@ QByteArray AudioInput::generateWavHeader(quint32 dataSize) const {
     // 将结构体转为字节数组
     QByteArray headerBytes(reinterpret_cast<const char*>(&header), sizeof(WavHeader));
     return headerBytes;
+}
+
+void AudioInput::setSilenceThreshold(qreal silenceThreshold)
+{
+    this->silenceThreshold = silenceThreshold;
+}
+
+qreal AudioInput::getSilenceThreshold() const
+{
+    return this->silenceThreshold;
 }

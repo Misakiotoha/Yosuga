@@ -6,17 +6,11 @@
 #define AIRI_DESKTOPGRIL_AUDIOPAGE_H
 
 #include "BasePage.h"
-
-class ElaToggleSwitch;
-class ElaToggleButton;
+#include "ElaPushButton.h"
 class ElaComboBox;
-class ElaMultiSelectComboBox;
-class ElaMessageButton;
-class ElaCheckBox;
 class ElaSpinBox;
-class ElaSlider;
-class ElaRadioButton;
 class ElaProgressBar;
+class ElaPushButton;
 class AudioPage : public BasePage
 {
     Q_OBJECT
@@ -31,6 +25,8 @@ private:
     ElaComboBox* audioInputDeviceComboBox = nullptr;
     ElaSpinBox* audioInputSpinBox = nullptr;
     ElaProgressBar* audioInputProgressBar = nullptr;
+    ElaPushButton* audioAutoThresholdStartButton = nullptr;
+    ElaPushButton* audioManualThresholdStartButton = nullptr;
 };
 
 

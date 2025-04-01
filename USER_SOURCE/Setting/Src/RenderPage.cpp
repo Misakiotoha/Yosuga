@@ -27,8 +27,8 @@ RenderPage::RenderPage(QWidget* parent)
     ElaText* frameRateComboBoxText = new ElaText("帧率设置", this);
     frameRateComboBoxText->setTextPixelSize(15);
     frameRateComboBoxLayout->addWidget(frameRateComboBoxText);
-    frameRateComboBoxLayout->addWidget(frameRateComboBox);
     frameRateComboBoxLayout->addStretch();
+    frameRateComboBoxLayout->addWidget(frameRateComboBox);
     frameRateComboBoxLayout->addSpacing(10);
     connect(frameRateComboBox, &ElaComboBox::currentTextChanged, this, [this](const QString& text) {
         AppContext::GetGLCore()->setFrameRate(GLCore::getFrameRateMap().value(text));

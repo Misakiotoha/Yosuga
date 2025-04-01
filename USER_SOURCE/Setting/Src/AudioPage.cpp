@@ -4,6 +4,7 @@
 
 #include "AudioPage.h"
 
+
 #include <QHBoxLayout>
 
 #include "ElaComboBox.h"
@@ -23,6 +24,7 @@ AudioPage::AudioPage(QWidget* parent)
     setWindowTitle("AudioPage");
 
     audioInputDeviceComboBox = new ElaComboBox(this);
+    audioInputDeviceComboBox->setToolTip("选择可用的录音设备");
     QStringList comboList = AudioInput::getAvailableAudioInputDevices();
 
     audioInputDeviceComboBox->addItems(comboList);
@@ -41,9 +43,9 @@ AudioPage::AudioPage(QWidget* parent)
 
 
     audioInputSpinBox = new ElaSpinBox(this);   // SpinBox
-    audioInputSpinBox->setRange(0, 1000);
+    audioInputSpinBox->setRange(0, 10000);
     audioInputProgressBar = new ElaProgressBar(this);
-    audioInputProgressBar->setRange(0, 1000);
+    audioInputProgressBar->setRange(0, 10000);
     // 关闭ProgressBar的百分比显示
     audioInputProgressBar->setTextVisible(false);
     // 将SpinBox和ProgressBar的数值相互绑定
@@ -53,15 +55,39 @@ AudioPage::AudioPage(QWidget* parent)
     connect(audioInputProgressBar, QOverload<int>::of(&ElaProgressBar::valueChanged), [this](int value) {
         audioInputSpinBox->setValue(value);
     });
+    // 绑定实时录音阈值到ProgressBar，同时归一到0~1000范围内
+    connect(AudioInput::getInstance(), &AudioInput::rmsRealValue, [this](qreal value) {
+        audioInputProgressBar->setValue(value);
+    });
+    // 当计算完成最优阈值
+    connect(AudioInput::getInstance(), &AudioInput::thresholdCalculated, [this](qreal value) {
+        ElaMessageBar::success(ElaMessageBarType::TopRight, "音频设置", "自动计算出的最优阈值为：" + QString::number(value), 1000, this);
+        // AudioInput会自动设置计算出的最优阈值
+    });
+    audioAutoThresholdStartButton = new ElaPushButton("自动最优阈值", this);
+    audioAutoThresholdStartButton->setToolTip("点击后保持当前环境音5秒，自动计算出最合适的静音检测阈值");
+    connect(audioAutoThresholdStartButton, &ElaPushButton::clicked, [this]() {
+        AudioInput::getInstance()->startAutoThresholdClu(5000);
+    });
+    audioManualThresholdStartButton = new ElaPushButton("手动设置阈值", this);
+    audioManualThresholdStartButton->setToolTip("如果你觉得自动计算的不准的话");
+    connect(audioManualThresholdStartButton, &ElaPushButton::clicked, [this]() {
+        AudioInput::getInstance()->setSilenceThreshold(audioInputSpinBox->value());
+        ElaMessageBar::success(ElaMessageBarType::TopRight, "音频设置", "手动设置的阈值为：" + QString::number(audioInputSpinBox->value()), 1000, this);
+    });
 
     ElaScrollPageArea* audioInputProgressBarArea = new ElaScrollPageArea(this);
     QHBoxLayout* audioInputProgressBarLayout = new QHBoxLayout(audioInputProgressBarArea);
     ElaText* audioInputProgressBarText = new ElaText("录音阈值", this);
     audioInputProgressBarText->setTextPixelSize(15);
     audioInputProgressBarLayout->addWidget(audioInputProgressBarText);
-    audioInputProgressBarLayout->addWidget(audioInputProgressBar);
+    audioInputProgressBarLayout->addWidget(audioInputProgressBar, 1);
     audioInputProgressBarLayout->addWidget(audioInputSpinBox);
+    audioInputProgressBarLayout->addStretch();  // 添加弹性空间将后续控件推到右侧
+    audioInputProgressBarLayout->addWidget(audioAutoThresholdStartButton);
+    audioInputProgressBarLayout->addWidget(audioManualThresholdStartButton);
     audioInputProgressBarLayout->addStretch();
+    audioInputProgressBarLayout->addSpacing(10);
 
 
     QWidget* centralWidget = new QWidget(this);

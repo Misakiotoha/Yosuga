@@ -14,7 +14,8 @@
 #include <QAudioBuffer>
 #include <QAudioDeviceInfo>
 #include <QList>
-
+#include <vector>
+#include <numeric>
 
 /**
  * @brief  录音模块
@@ -161,6 +162,8 @@ signals:
     void recordingFinished_Byte(const QByteArray &wavData);
     // 实时RMS值信号
     void rmsRealValue(qreal value);
+    // 阈值计算完成信号
+    void thresholdCalculated(qreal bestThreshold);
 
 private slots:
     void onTimeout();  // 定时器超时槽函数
@@ -176,6 +179,7 @@ private:
     bool isAutoThreshold;                   /// 是否自动计算阈值
 
     QTimer *thresholdTimer;                 /// 阈值计算定时器
+    std::vector<qreal> rmsValues;           /// RMS值vector
 
     QTimer *silenceTimer;                   /// 静音检测定时器
     qreal silenceThreshold;                 /// 静音阈值

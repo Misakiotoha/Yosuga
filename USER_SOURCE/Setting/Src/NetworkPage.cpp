@@ -79,6 +79,7 @@ NetWorkPage::NetWorkPage(QWidget* parent)
     portToggleSwitchLayout->addSpacing(10);
 
     connectTestPushButton = new ElaPushButton("连通测试",this);
+    connectTestPushButton->setToolTip("测试与服务器连通性(如果成功连通会自动连上服务器)");
     connectPushButton = new ElaPushButton("连接",this);
     disconnectPushButton = new ElaPushButton("断开",this);
     ElaScrollPageArea* connectTestArea = new ElaScrollPageArea(this);
