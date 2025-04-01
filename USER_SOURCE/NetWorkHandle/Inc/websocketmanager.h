@@ -2,6 +2,10 @@
 // Created by Administrator on 2025/2/4.
 //
 
+/**
+ * 已废弃
+ */
+
 #ifndef AIRI_DESKTOPGRIL_WEBSOCKETMANAGER_H
 #define AIRI_DESKTOPGRIL_WEBSOCKETMANAGER_H
 

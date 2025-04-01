@@ -55,7 +55,7 @@ HomePage::HomePage(QWidget* parent)
     urlCard1->setUrl("https://github.com/Misakiotoha/Yosuga");
     urlCard1->setCardPixmap(QPixmap("Resource/Pic/Others/img.png"));
     urlCard1->setTitle("Yosuga Github");
-    urlCard1->setSubTitle("Use ElaWidgetTools To Create A Cool Project");
+    urlCard1->setSubTitle("Star++!");
     ElaToolTip* urlCard1ToolTip = new ElaToolTip(urlCard1);
     urlCard1ToolTip->setToolTip("点击前往本项目GitHub");
 

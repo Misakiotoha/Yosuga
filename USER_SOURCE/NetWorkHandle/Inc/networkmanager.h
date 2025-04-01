@@ -2,6 +2,10 @@
 // Created by Administrator on 2025/1/19.
 //
 
+/**
+ * 已废弃
+ */
+
 #ifndef AIRI_DESKTOPGRIL_NETWORKMANAGER_H
 #define AIRI_DESKTOPGRIL_NETWORKMANAGER_H
 

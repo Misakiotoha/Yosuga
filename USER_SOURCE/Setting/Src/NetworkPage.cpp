@@ -4,26 +4,15 @@
 
 #include "NetworkPage.h"
 
-
 #include <QHBoxLayout>
-#include <QVBoxLayout>
 
-#include "ElaCheckBox.h"
 #include "ElaComboBox.h"
-#include "ElaMessageButton.h"
-#include "ElaMultiSelectComboBox.h"
 #include "ElaPlainTextEdit.h"
-#include "ElaProgressBar.h"
-#include "ElaRadioButton.h"
 #include "ElaScrollPageArea.h"
-#include "ElaSlider.h"
 #include "ElaSpinBox.h"
 #include "ElaText.h"
-#include "ElaToggleButton.h"
-#include "ElaToggleSwitch.h"
 
 #include "socketmanager.h"
-#include <QDebug>
 #include <QHostAddress>
 #include "ElaMessageBar.h"
 NetWorkPage::NetWorkPage(QWidget* parent)

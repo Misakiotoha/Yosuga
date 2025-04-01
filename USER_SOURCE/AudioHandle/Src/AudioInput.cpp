@@ -20,14 +20,20 @@ AudioInput::AudioInput(QObject *parent) : QAudioRecorder(parent)
     // new一些必要的对象
     // 创建音频设置对象
     audioSettings = new QAudioEncoderSettings();
-    timer = new QTimer(this);
+    // 创建探测器对象
     probe = new QAudioProbe(this);
+    // 创建定时器对象
+    timer = new QTimer(this);
     silenceTimer = new QTimer(this);
+    thresholdTimer = new QTimer(this);
 
     // 连接定时器的 timeout 信号到 onTimeout 方法
     connect(timer, &QTimer::timeout, this, &AudioInput::onTimeout);
     // 连接静音检测定时器的 timeout 信号到 stopAudio 方法
     connect(silenceTimer, &QTimer::timeout, this, &AudioInput::stopAudio);
+    // 连接阈值检测定时器的 timeout 信号到 thresholdTimeout 方法
+    connect(thresholdTimer, &QTimer::timeout, this, &AudioInput::thresholdTimeout);
+
     // 连接探测器到 processBuffer 方法
     connect(probe, &QAudioProbe::audioBufferProbed, this, &AudioInput::processBuffer);
 
@@ -54,6 +60,8 @@ AudioInput::~AudioInput()
 
 void AudioInput::setAudioSettings(const QString& codec, int rate, int channels, int bitrate, QMultimedia::EncodingQuality quality, QMultimedia::EncodingMode mode)
 {
+    // 设置默认录音设备为第一个
+    setAudioInputDevice(getAvailableAudioInputDevices().first());
     audioSettings->setCodec(codec);
     audioSettings->setSampleRate(rate);
     audioSettings->setChannelCount(channels);
@@ -88,8 +96,8 @@ void AudioInput::stopAudio()
     // 生成WAV头并拼接数据
     QByteArray wavData;
     if (!rawPCMData.isEmpty()) {
-        wavData = generateWavHeader(rawPCMData.size());
-        wavData.append(rawPCMData);
+        wavData = generateWavHeader(rawPCMData.size());  // 添加头
+        wavData.append(rawPCMData);                             // 添加数据
         rawPCMData.clear(); // 清空缓存
     }
     emit recordingFinished_Byte(wavData); // 发射信号携带完整WAV数据
@@ -100,6 +108,21 @@ void AudioInput::stopAudio()
     }
     if (silenceTimer->isActive()) {
         silenceTimer->stop();
+    }
+    this->isAutoRecording = false;  // 自动录音结束tag
+}
+
+// 阈值检测超时槽函数
+void AudioInput::thresholdTimeout()
+{
+    this->isAutoThreshold = false;  // 自动阈值结束tag
+
+    // 停止录音
+    stop();
+
+    // 停止定时器
+    if (thresholdTimer->isActive()) {
+        thresholdTimer->stop();
     }
 }
 
@@ -122,6 +145,9 @@ void AudioInput::onTimeout()
 // 开始自动录音
 void AudioInput::startAutoStopAudio(qreal silenceThreshold, int silenceDuration)
 {
+    this->isAutoRecording = true;   // 自动录音开始tag
+
+    // 记录当前的静音阈值和静音持续时间
     this->silenceThreshold = silenceThreshold;
     this->silenceDuration = silenceDuration;
 
@@ -141,46 +167,102 @@ void AudioInput::startAutoStopAudio(qreal silenceThreshold, int silenceDuration)
     });
 }
 
-// 处理音频缓冲区
-void AudioInput::processBuffer(const QAudioBuffer& buffer)
+// 开始自动阈值检测
+void AudioInput::startAutoThresholdClu(int Duration)
 {
-    // 保存音频格式（首次调用时记录）
-    if (audioFormat != buffer.format()) {
-        audioFormat = buffer.format();
-        qDebug() << "音频格式已捕获:"
-                 << "采样率:" << audioFormat.sampleRate()
-                 << "声道数:" << audioFormat.channelCount()
-                 << "位深:" << audioFormat.sampleSize();
+    this->isAutoThreshold = true;   // 自动阈值开始tag
+
+    // 启动录音
+    startAudio();
+
+    // 绑定 QAudioProbe
+    if (probe->setSource(this)) {
+        qDebug() << "QAudioProbe 绑定成功";
+    } else {
+        qWarning() << "QAudioProbe 绑定失败";
     }
 
-    // 将音频数据追加到缓冲区
-    const char *datas = buffer.constData<char>();
-    rawPCMData.append(datas, buffer.byteCount());
+    // 启动定时器
+    QTimer::singleShot(100, this, [&]() {
+        thresholdTimer->start(Duration);
+    });
 
+}
 
+/**
+ * 处理音频缓冲区
+ * 下面的函数同时承载了两个功能
+ *      1.静音检测
+ *      2.自动阈值检测
+ * 为什么要让一个槽函数承载两个功能，这就要说说Qt5音频处理这一块了
+ * QAudioProbe是用作音频探测的，将QAudioProbe绑定到QAudioRecorder
+ * QAudioProbe会触发probeBufferProbed信号
+ * 如果存在多个QAudioProbe绑定到相同QAudioRecorder
+ * 那么当QAudioRecorder启动录音时多个QAudioProbe的probeBufferProbed信号都会触发
+ * 因此在两个功能同时被使用时，与其使用两个槽函数交替运行浪费堆栈
+ * 不如都写在一个里面用bool去区分
+ *
+ * @param buffer
+ */
+void AudioInput::processBuffer(const QAudioBuffer& buffer)
+{
+    // 计算RMS
+    this->rmsValue = this->calculateRMS(buffer);
+
+    if(this->isAutoRecording){  // 自动停止录音
+        // 保存音频格式（首次调用时记录）
+        if (audioFormat != buffer.format()) {
+            audioFormat = buffer.format();
+            qDebug() << "音频格式已捕获:"
+                     << "采样率:" << audioFormat.sampleRate()
+                     << "声道数:" << audioFormat.channelCount()
+                     << "位深:" << audioFormat.sampleSize();
+        }
+
+        // 将音频数据追加到缓冲区
+        const char *datas = buffer.constData<char>();
+        rawPCMData.append(datas, buffer.byteCount());
+
+        qDebug() << "RMS 音量：" << rmsValue;
+
+        // 判断是否静音
+        if (rmsValue < this->silenceThreshold) {
+            // 如果静音，启动或继续定时器
+            if (!silenceTimer->isActive()) {
+                silenceTimer->start(silenceDuration);
+            }
+        } else {
+            // 如果有声音，重置定时器
+            silenceTimer->stop();
+            silenceTimer->start(silenceDuration);  // 重置静音计时
+        }
+    }
+    if(this->isAutoThreshold){  // 阈值检测
+        // 得到当前实时的RMS值通过信号发射出去，如何处理交给绑定这个信号的槽函数
+        qDebug() << "RMS 音量：" << rmsValue;
+        emit rmsRealValue(rmsValue);    // 一般用于实时阈值显示
+    }
+
+}
+
+qreal AudioInput::calculateRMS(const QAudioBuffer& buffer)
+{
     qreal rmsValue = 0;
-    const qint16 *data = buffer.constData<qint16>();
+
+    const qint16* data = buffer.constData<qint16>();
     int sampleCount = buffer.sampleCount();
 
-    // 计算 RMS 音量
+    if (sampleCount == 0) return 0;
+
+    // 计算平方和
     for (int i = 0; i < sampleCount; ++i) {
         rmsValue += static_cast<qreal>(data[i]) * data[i];
     }
+
+    // 计算均方根
     rmsValue = qSqrt(rmsValue / sampleCount);
 
-    qDebug() << "RMS 音量：" << rmsValue;
-
-    // 判断是否静音
-    if (rmsValue < silenceThreshold) {
-        // 如果静音，启动或继续定时器
-        if (!silenceTimer->isActive()) {
-            silenceTimer->start(silenceDuration);
-        }
-    } else {
-        // 如果有声音，重置定时器
-        silenceTimer->stop();
-        silenceTimer->start(silenceDuration);  // 重置静音计时
-    }
+    return rmsValue;
 }
 
 // 获取所有音频输入设备

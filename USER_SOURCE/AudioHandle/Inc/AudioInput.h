@@ -19,8 +19,10 @@
 /**
  * @brief  录音模块
  * @author Misaki
+ * @date   2025/1/17
  * 单例类
  * 移植Qt6需注意，Qt6的QAudioRecorder类已废弃，使用QMediaRecorder代替
+ * 这个类中的定时录音有点问题，不过因为用不上就懒得修了，需要用的话注意改一下就行
  */
 class AudioInput : public QAudioRecorder
 {
@@ -127,6 +129,12 @@ public:
     void startAutoStopAudio(qreal silenceThreshold = 1200, int silenceDuration = 1500);
 
     /**
+     * @brief 开始最佳阈值计算
+     * @param Duration 持续时间，单位为毫秒
+     */
+    void startAutoThresholdClu(int Duration = 5000);
+
+    /**
      * @brief 获取当前系统所有的音频输入设备
      * @return 音频输入设备名称列表
      */
@@ -138,17 +146,25 @@ public:
      */
     void setAudioInputDevice(const QString &deviceName);
 
+    void setSilenceThreshold(qreal silenceThreshold);
+    qreal getSilenceThreshold() const;
+
 private:
     // WAV头生成工具函数
     QByteArray generateWavHeader(quint32 dataSize) const;
+    // 计算RMS值工具函数
+    qreal calculateRMS(const QAudioBuffer& buffer);
 
 signals:
     // 录音完成信号
     void recordingFinished();
     void recordingFinished_Byte(const QByteArray &wavData);
+    // 实时RMS值信号
+    void rmsRealValue(qreal value);
 
 private slots:
     void onTimeout();  // 定时器超时槽函数
+    void thresholdTimeout();    // 阈值超时槽函数
     void processBuffer(const QAudioBuffer& buffer); // 处理缓冲区数据
 
 
@@ -156,10 +172,16 @@ private:
     QAudioEncoderSettings *audioSettings;   /// 音频设置
     QTimer *timer;                          /// 定时器
     QAudioProbe *probe;                     /// 音频探测
+    bool isAutoRecording;                   /// 是否自动录音状态
+    bool isAutoThreshold;                   /// 是否自动计算阈值
+
+    QTimer *thresholdTimer;                 /// 阈值计算定时器
+
     QTimer *silenceTimer;                   /// 静音检测定时器
     qreal silenceThreshold;                 /// 静音阈值
     int silenceDuration;                    /// 静音持续时间
 
+    qreal rmsValue;                         /// 实时RMS值
     QByteArray rawPCMData;                  /// 存储原始PCM数据
     QAudioFormat audioFormat;               /// 保存音频格式信息
 };
