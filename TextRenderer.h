@@ -72,6 +72,13 @@ public:
     void setGravity(float g) { gravity = g; }
     void setDampFactor(float damp) { dampFactor = damp; }
 
+    // 释放单例
+    static void releaseInstance() {
+        if (instance) {
+            delete instance;
+            instance = nullptr;
+        }
+    }
 private:
     explicit TextRenderer();  // 构造函数私有化
     void updateFlowPositions(TextInstance &instance);

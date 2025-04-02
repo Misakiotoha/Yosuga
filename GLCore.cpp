@@ -52,7 +52,7 @@ GLCore::GLCore(int w, int h, QWidget *parent)
 
 
     // new一些必要的对象
-    contextMenu = new Menu();
+    contextMenu = new Menu(this);
 
     // 设置窗口大小
     setFixedSize(w, h);
@@ -92,6 +92,12 @@ GLCore::~GLCore()
 {
     // 注销实例
     AppContext::UnregisterGLCore();
+
+    // 释放TextRender单例
+    TextRenderer::releaseInstance();
+
+    // 释放Live2D 单例
+    LAppDelegate::ReleaseInstance();
 }
 
 // 帧率设置

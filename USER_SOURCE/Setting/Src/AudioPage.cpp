@@ -126,4 +126,5 @@ AudioPage::AudioPage(QWidget* parent)
 
 AudioPage::~AudioPage()
 {
+    
 }
