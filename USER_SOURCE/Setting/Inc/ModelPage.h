@@ -33,9 +33,9 @@ public:
 
 private:
     // 设置当前模型
-    ElaLineEdit* modelUrlEdit;
-    ElaPushButton* modelChoosePushButton;
-    ElaPushButton* modelUsePushButton;
+    ElaLineEdit* modelUrlEdit = nullptr;
+    ElaPushButton* modelChoosePushButton = nullptr;
+    ElaPushButton* modelUsePushButton = nullptr;
     QUrl modelFileUrl;
     QString modelFilePathFirst;
     QString modelFilePathSecond;

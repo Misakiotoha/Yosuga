@@ -208,6 +208,26 @@ if (NOT FONT_W) # 如果没有这个Font目录就复制过去
     )
 endif ()
 
+# 复制测试音频文件到生成目录cmake-build-xxx
+file(GLOB TWAV "${CMAKE_BINARY_DIR}/test.wav")
+if (NOT TWAV) # 如果没有这个Font目录就复制过去
+    file(COPY
+            "${CMAKE_SOURCE_DIR}/test.wav"
+            DESTINATION
+            "${CMAKE_BINARY_DIR}/"
+    )
+endif ()
+
+# 复制云母底图文件到生成目录cmake-build-xxx
+file(GLOB MICA "${CMAKE_BINARY_DIR}/MicaBase.png")
+if (NOT MICA) # 如果没有这个Font目录就复制过去
+    file(COPY
+            "${CMAKE_SOURCE_DIR}/MicaBase.png"
+            DESTINATION
+            "${CMAKE_BINARY_DIR}/"
+    )
+endif ()
+
 # 复制其他资源文件目录到生成目录cmake-build-debug
 file(GLOB RES_W "${CMAKE_BINARY_DIR}/Resource")
 #message(STATUS FW: ${RES_W})

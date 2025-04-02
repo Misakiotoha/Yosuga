@@ -17,13 +17,13 @@ public:
     ~UISetting();
 
 private:
-    ElaComboBox* _themeComboBox{nullptr};
-    ElaToggleSwitch* _micaSwitchButton{nullptr};
-    ElaToggleSwitch* _logSwitchButton{nullptr};
-    ElaRadioButton* _minimumButton{nullptr};
-    ElaRadioButton* _compactButton{nullptr};
-    ElaRadioButton* _maximumButton{nullptr};
-    ElaRadioButton* _autoButton{nullptr};
+    ElaComboBox* _themeComboBox = nullptr;
+    ElaToggleSwitch* _micaSwitchButton = nullptr;
+    ElaToggleSwitch* _logSwitchButton = nullptr;
+    ElaRadioButton* _minimumButton = nullptr;
+    ElaRadioButton* _compactButton = nullptr;
+    ElaRadioButton* _maximumButton = nullptr;
+    ElaRadioButton* _autoButton = nullptr;
 };
 
 #endif //AIRI_DESKTOPGRIL_UISETTING_H

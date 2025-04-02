@@ -69,7 +69,7 @@ UISetting::UISetting(QWidget* parent)
     _micaSwitchButton = new ElaToggleSwitch(this);
     ElaScrollPageArea* micaSwitchArea = new ElaScrollPageArea(this);
     QHBoxLayout* micaSwitchLayout = new QHBoxLayout(micaSwitchArea);
-    ElaText* micaSwitchText = new ElaText("启用云母效果(跨平台)", this);
+    ElaText* micaSwitchText = new ElaText("启用云母效果", this);
     micaSwitchText->setWordWrap(false);
     micaSwitchText->setTextPixelSize(15);
     micaSwitchLayout->addWidget(micaSwitchText);
