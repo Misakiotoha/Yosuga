@@ -106,7 +106,7 @@ HomePage::HomePage(QWidget* parent)
     // ElaFlowLayout
     ElaPopularCard* ModeShopCard = new ElaPopularCard(this);
     connect(ModeShopCard, &ElaPopularCard::popularCardButtonClicked, this, [=]() {
-        QDesktopServices::openUrl(QUrl("https://github.com/Liniyous/ElaWidgetTools"));
+        Q_EMIT modelShopNavigation();
     });
     ModeShopCard->setCardPixmap(QPixmap("Resource/Pic/Others/Live2D.png"));
     ModeShopCard->setTitle("模型商店");
@@ -115,7 +115,9 @@ HomePage::HomePage(QWidget* parent)
     ModeShopCard->setDetailedText("选择你喜欢的Live2D模型，模型来自多个作者，多个平台，有免费也有收费的");
 
     ElaPopularCard* AudioSettingCard = new ElaPopularCard(this);
-    connect(AudioSettingCard, &ElaPopularCard::popularCardButtonClicked, this, [=]() { Q_EMIT elaScreenNavigation(); });
+    connect(AudioSettingCard, &ElaPopularCard::popularCardButtonClicked, this, [=]() {
+        Q_EMIT audioNavigation();
+    });
     AudioSettingCard->setTitle("音频设置");
     AudioSettingCard->setSubTitle("录音与播放的设置");
     AudioSettingCard->setCardPixmap(QPixmap("Resource/Pic/control/AutomationProperties.png"));

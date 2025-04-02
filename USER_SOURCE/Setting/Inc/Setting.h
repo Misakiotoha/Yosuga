@@ -16,6 +16,7 @@
 #include "UISetting.h"
 #include "AudioPage.h"
 #include "RenderPage.h"
+#include "ModelPage.h"
 class Setting : public ElaWindow
 {
 Q_OBJECT
@@ -26,7 +27,7 @@ public:
 
 private:
     /**
-     * 初始化所有页面
+     * 初始化所有页面指针
      * @author : Misaki
      */
     void initPages();
@@ -36,6 +37,12 @@ private:
      * @author : Misaki
      */
     void initNavigationBar();
+
+    /**
+     * 初始化上下文切换
+     * @author : Misaki
+     */
+    void initContent();
 
 private slots:
     void toggleTheme();
@@ -47,6 +54,7 @@ private:
     UISetting *uiSetting;
     AudioPage *audioPage;
     RenderPage *renderPage;
+    ModelPage *modelPage;
 
     // 节点键值
     QString basePageKey;

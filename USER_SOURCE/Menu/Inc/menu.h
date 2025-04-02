@@ -5,7 +5,7 @@
  * @brief  菜单
  * @author Misaki
  *
- * 这是一个基于Ela UI的菜单控件
+ * 基于Ela UI的菜单控件
  */
 
 #include "ElaMenu.h"
@@ -34,12 +34,6 @@ signals:
 
 private:
     void createMenu();
-    QMenu *subMenu1;
-    QMenu *subMenu2;
-    QAction *action1;
-    QAction *action2;
-    QAction *action3;
-    QAction *action4;
     QAction *toggleThe;         /// 切换主题(全局)
     QAction *startPlayAction;   /// 开始播放
     QAction *socketAction;      /// Socket模块测试

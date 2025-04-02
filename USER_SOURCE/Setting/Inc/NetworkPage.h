@@ -22,19 +22,19 @@ public:
 
 private:
     // IP控件
-    ElaPushButton* ipPushButton{nullptr};
-    ElaLineEdit* ipLineEdit{nullptr};
+    ElaPushButton* ipPushButton = nullptr;
+    ElaLineEdit* ipLineEdit = nullptr;
 
     // 端口控件
-    ElaPushButton* portPushButton{nullptr};
-    ElaLineEdit* portLineEdit{nullptr};
+    ElaPushButton* portPushButton = nullptr;
+    ElaLineEdit* portLineEdit = nullptr;
 
     // 连接测试
-    ElaPushButton* connectTestPushButton{nullptr};
+    ElaPushButton* connectTestPushButton = nullptr;
     // 连接
-    ElaPushButton* connectPushButton{nullptr};
+    ElaPushButton* connectPushButton = nullptr;
     // 断开
-    ElaPushButton* disconnectPushButton{nullptr};
+    ElaPushButton* disconnectPushButton = nullptr;
 
 };
 

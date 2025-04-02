@@ -24,18 +24,6 @@ Menu::~Menu()
 
 void Menu::createMenu()
 {
-    // 创建主菜单项
-    action1 = addAction("动作1");
-    action2 = addAction("Action 2");
-
-    // 创建子菜单
-    subMenu1 = addMenu("Sub Menu 1");
-    subMenu2 = addMenu("Sub Menu 2");
-
-    // 添加子菜单项
-    action3 = subMenu1->addAction("Sub Action 1");
-    action4 = subMenu2->addAction("Sub Action 2");
-
     toggleThe = addAction("切换主题");
 
     // 添加播放音频按钮
@@ -56,22 +44,7 @@ void Menu::createMenu()
     // 添加关闭按钮
     closeAction = addAction("关闭");
 
-    // 连接信号和槽
-    connect(action1, &QAction::triggered, this, []() {
-        qDebug() << "Action 1 triggered";
-    });
-
-    connect(action2, &QAction::triggered, this, []() {
-        qDebug() << "Action 2 triggered";
-    });
-
-    connect(action3, &QAction::triggered, this, []() {
-        qDebug() << "Sub Action 1 triggered";
-    });
-
-    connect(action4, &QAction::triggered, this, []() {
-        qDebug() << "Sub Action 2 triggered";
-    });
+    // 连接信号与槽
 
     // 切换主题按钮
     connect(toggleThe, &QAction::triggered, this, [this]() {

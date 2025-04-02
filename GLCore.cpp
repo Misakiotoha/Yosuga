@@ -82,6 +82,8 @@ GLCore::GLCore(int w, int h, QWidget *parent)
 
     // 连接一些必要的信号与槽
     connect(contextMenu, &Menu::closeMainWindow, this, &GLCore::closeGL);
+
+    // TODO
     connect(contextMenu, &Menu::startPlay, this, &GLCore::playAudioTest);
 
 
@@ -96,6 +98,7 @@ GLCore::~GLCore()
     AppContext::UnregisterGLCore();
 }
 
+// TODO
 void GLCore::playAudioTest()
 {
     // 示例：播放6秒音频，显示文字

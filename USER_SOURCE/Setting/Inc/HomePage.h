@@ -14,13 +14,11 @@ public:
     Q_INVOKABLE explicit HomePage(QWidget* parent = nullptr);
     ~HomePage();
     Q_SIGNALS:
-            Q_SIGNAL void elaScreenNavigation();
-    Q_SIGNAL void elaBaseComponentNavigation();
-    Q_SIGNAL void elaSceneNavigation();
-    Q_SIGNAL void elaCardNavigation();
-    Q_SIGNAL void elaIconNavigation();
-
-
+        Q_SIGNAL void audioNavigation();
+        Q_SIGNAL void modelShopNavigation();
+        Q_SIGNAL void elaSceneNavigation();
+        Q_SIGNAL void elaCardNavigation();
+        Q_SIGNAL void elaIconNavigation();
 };
 
 

@@ -51,6 +51,9 @@ Setting::Setting(QWidget *parent)
     // 创建导航栏和内容区域
     initNavigationBar();
 
+    // 创建上下文
+    initContent();
+
     // 设置初始主题
     eTheme->setThemeMode(ElaThemeType::Dark);
 }
@@ -67,6 +70,7 @@ void Setting::initPages()
     uiSetting = new UISetting(this);
     audioPage = new AudioPage(this);
     renderPage = new RenderPage(this);
+    modelPage = new ModelPage(this);
 }
 
 void Setting::initNavigationBar()
@@ -74,8 +78,8 @@ void Setting::initNavigationBar()
     // 添加主页节点（顶级节点）
     addPageNode("主页", homePage, ElaIconType::House);
 
-    // TODO 添加Live2D商店节点
-    addPageNode("Live2D商店", nullptr, ElaIconType::Shop);
+    // 添加模型商店节点
+    addPageNode("模型商店", modelPage, ElaIconType::Shop);
 
     // 添加网络连接设置节点
     addPageNode("连接设置", networkPage, ElaIconType::NetworkWired);
@@ -84,11 +88,15 @@ void Setting::initNavigationBar()
     // 添加渲染设置节点
     addPageNode("渲染设置", renderPage,  ElaIconType::ArrowsRotate);
 
-    QString expanderKey2;
-    this->addExpanderNode("高级", expanderKey2, ElaIconType::Paintbrush);
-
     QString uiSettingKey;
     addFooterNode("UI设置", uiSetting, uiSettingKey, 0, ElaIconType::GearComplex);
+}
+
+void Setting::initContent()
+{
+    connect(homePage, &HomePage::modelShopNavigation, this, [=](){
+        this->navigation(modelPage->property("ElaPageKey").toString());
+    });
 }
 
 

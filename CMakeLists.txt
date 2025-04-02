@@ -97,6 +97,8 @@ add_executable(${PROJECT_NAME} ${CON}
         USER_SOURCE/Setting/Inc/RenderPage.h
         USER_SOURCE/Setting/Src/RenderPage.cpp
         AppContext.h
+        USER_SOURCE/Setting/Inc/ModelPage.h
+        USER_SOURCE/Setting/Src/ModelPage.cpp
 )
 
 

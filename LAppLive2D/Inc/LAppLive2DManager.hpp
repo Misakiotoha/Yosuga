@@ -99,13 +99,13 @@ public:
      * @param[in] modelPath 模型文件的路径
      * @param[in] fileName 模型文件的名称
      * 
-     * Misaki 增设于2024.12.17
+     * Misaki 增设于2024.12.17 <br>
      * 
-     * 举个例子：
-     *  LoadModelFromPath("Resources/Haru/", "Haru.model3.json");
+     * 举个例子：<br>
+     *  LoadModelFromPath("Resources/Haru/", "Haru.model3.json");<br>
      * 
-     * 至于为什么要这样拆分，只是为了适应底层的模型加载函数
-     * 你可以选择再上层封装，将传入的路径拆分为路径和文件名，然后调用本函数即可
+     * 至于为什么要这样拆分，只是为了适应底层的模型加载函数<br>
+     * 你可以选择再上层封装，将传入的路径拆分为路径和文件名，然后调用本函数即可<br>
      */
     void LoadModelFromPath(const std::string& modelPath, const std::string& fileName);
 
