@@ -28,9 +28,6 @@ public:
     static QMap<QString, double> getFrameRateMap();
     static QStringList getFrameRateList();
 
-    void playAudioTest();
-
-
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;

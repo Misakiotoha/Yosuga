@@ -17,6 +17,9 @@
 #include "ElaMessageBar.h"
 
 #include "AudioInput.h"
+#include "AudioOutput.h"
+#include "TextRenderer.h"
+#include "LAppLive2DManager.hpp"
 AudioPage::AudioPage(QWidget* parent)
         : BasePage(parent)
 {
@@ -89,12 +92,32 @@ AudioPage::AudioPage(QWidget* parent)
     audioInputProgressBarLayout->addStretch();
     audioInputProgressBarLayout->addSpacing(10);
 
+    testAudioPlayButton = new ElaPushButton("播放测试", this);
+    testAudioPlayButton->setToolTip("播放一段测试音频来检测播放功能是否正常,注意观察模型嘴唇以及文字下落动画");
+    ElaScrollPageArea* testAudioArea = new ElaScrollPageArea(this);
+    QHBoxLayout* testAudioLayout = new QHBoxLayout(testAudioArea);
+    ElaText* testAudioText = new ElaText("测试", this);
+    testAudioText->setTextPixelSize(15);
+    testAudioLayout->addWidget(testAudioText);
+    testAudioLayout->addStretch();  // 添加弹性空间将后续控件推到右侧
+    testAudioLayout->addWidget(testAudioPlayButton);
+    testAudioLayout->addSpacing(10);
+    connect(testAudioPlayButton, &ElaPushButton::clicked, [this]() {
+        const QString text = "あれアイリーじゃないよ!急にいなくなるからどこに行ったのかと思えば~";
+        const float duration = 6.0f; // 音频时长
+        TextRenderer::getInstance()->addText(text, 40.0f, QColor("#FF69B4"), duration);
+        LAppLive2DManager::GetInstance()->StartLipSync("test.wav");
+        AudioOutput::getInstance()->setAudioPath("test.wav");
+        AudioOutput::getInstance()->playAudio();
+    });
+
 
     QWidget* centralWidget = new QWidget(this);
     centralWidget->setWindowTitle("音频设置");
     QVBoxLayout* centerLayout = new QVBoxLayout(centralWidget);
     centerLayout->addWidget(comboBoxArea);
     centerLayout->addWidget(audioInputProgressBarArea);
+    centerLayout->addWidget(testAudioArea);
     centerLayout->addStretch();
     centerLayout->setContentsMargins(0, 0, 0, 0);
     addCentralWidget(centralWidget, true, true, 0);
@@ -103,37 +126,4 @@ AudioPage::AudioPage(QWidget* parent)
 
 AudioPage::~AudioPage()
 {
-}
-
-void AudioPage::mouseReleaseEvent(QMouseEvent* event)
-{
-    switch (event->button())
-    {
-        case Qt::LeftButton:
-        {
-            //ElaMessageBar::success(ElaMessageBarType::TopRight, "Success", "Never Close Your Eyes", 2500);
-            //ElaMessageBar::success(ElaMessageBarType::TopRight, "Success", "Never Close Your Eyes", 1500);
-            break;
-        }
-        case Qt::BackButton:
-        {
-            this->navigation(0);
-            break;
-        }
-        case Qt::ForwardButton:
-        {
-            this->navigation(1);
-            break;
-        }
-        case Qt::MiddleButton:
-        {
-            this->navigation(2);
-            break;
-        }
-        default:
-        {
-            break;
-        }
-    }
-    ElaScrollPage::mouseReleaseEvent(event);
 }

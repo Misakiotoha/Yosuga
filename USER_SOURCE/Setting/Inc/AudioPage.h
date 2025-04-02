@@ -18,15 +18,14 @@ public:
     Q_INVOKABLE explicit AudioPage(QWidget* parent = nullptr);
     ~AudioPage();
 
-protected:
-    virtual void mouseReleaseEvent(QMouseEvent* event);
-
 private:
     ElaComboBox* audioInputDeviceComboBox = nullptr;
     ElaSpinBox* audioInputSpinBox = nullptr;
     ElaProgressBar* audioInputProgressBar = nullptr;
     ElaPushButton* audioAutoThresholdStartButton = nullptr;
     ElaPushButton* audioManualThresholdStartButton = nullptr;
+
+    ElaPushButton* testAudioPlayButton = nullptr;
 };
 
 

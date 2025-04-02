@@ -16,9 +16,6 @@ public:
     Q_SIGNALS:
         Q_SIGNAL void audioNavigation();
         Q_SIGNAL void modelShopNavigation();
-        Q_SIGNAL void elaSceneNavigation();
-        Q_SIGNAL void elaCardNavigation();
-        Q_SIGNAL void elaIconNavigation();
 };
 
 

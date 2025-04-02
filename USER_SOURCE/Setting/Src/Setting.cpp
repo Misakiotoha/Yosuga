@@ -97,6 +97,9 @@ void Setting::initContent()
     connect(homePage, &HomePage::modelShopNavigation, this, [=](){
         this->navigation(modelPage->property("ElaPageKey").toString());
     });
+    connect(homePage, &HomePage::audioNavigation, this, [=](){
+       this->navigation(audioPage->property("ElaPageKey").toString());
+    });
 }
 
 

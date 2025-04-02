@@ -83,10 +83,6 @@ GLCore::GLCore(int w, int h, QWidget *parent)
     // 连接一些必要的信号与槽
     connect(contextMenu, &Menu::closeMainWindow, this, &GLCore::closeGL);
 
-    // TODO
-    connect(contextMenu, &Menu::startPlay, this, &GLCore::playAudioTest);
-
-
     // 注册当前实例到中介类
     AppContext::RegisterGLCore(this);
 }
@@ -96,22 +92,6 @@ GLCore::~GLCore()
 {
     // 注销实例
     AppContext::UnregisterGLCore();
-}
-
-// TODO
-void GLCore::playAudioTest()
-{
-    // 示例：播放6秒音频，显示文字
-    const QString text = "はい这是一个流式显示的测试文本，我需要它尽可能的长一些，来测试各种各样的Bug、はい～";
-    const QVector2D position(40, 40);
-    const QColor color(Qt::cyan);
-    const float duration = 6.0f; // 音频时长
-
-    TextRenderer::getInstance()->addText(text, 40.0f, QColor("#FF69B4"), duration);
-
-    LAppLive2DManager::GetInstance()->StartLipSync("test.wav");
-    AudioOutput::getInstance()->setAudioPath("test.wav");
-    AudioOutput::getInstance()->playAudio();
 }
 
 // 帧率设置

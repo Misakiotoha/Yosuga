@@ -104,6 +104,7 @@ HomePage::HomePage(QWidget* parent)
     flowTextLayout->setContentsMargins(33, 0, 0, 0);
     flowTextLayout->addWidget(flowText);
     // ElaFlowLayout
+    // 模型商店卡片
     ElaPopularCard* ModeShopCard = new ElaPopularCard(this);
     connect(ModeShopCard, &ElaPopularCard::popularCardButtonClicked, this, [=]() {
         Q_EMIT modelShopNavigation();
@@ -113,7 +114,7 @@ HomePage::HomePage(QWidget* parent)
     ModeShopCard->setSubTitle("属于你的Live2D模型");
     ModeShopCard->setInteractiveTips("By Misaki");
     ModeShopCard->setDetailedText("选择你喜欢的Live2D模型，模型来自多个作者，多个平台，有免费也有收费的");
-
+    // 音频设置卡片
     ElaPopularCard* AudioSettingCard = new ElaPopularCard(this);
     connect(AudioSettingCard, &ElaPopularCard::popularCardButtonClicked, this, [=]() {
         Q_EMIT audioNavigation();
@@ -123,7 +124,6 @@ HomePage::HomePage(QWidget* parent)
     AudioSettingCard->setCardPixmap(QPixmap("Resource/Pic/control/AutomationProperties.png"));
     AudioSettingCard->setInteractiveTips("By Misaki");
     AudioSettingCard->setDetailedText("自定义音频与播放的相关设定，打造最舒适的交流环境。");
-
 
     ElaFlowLayout* flowLayout = new ElaFlowLayout(0, 5, 5);
     flowLayout->setContentsMargins(30, 0, 0, 0);
