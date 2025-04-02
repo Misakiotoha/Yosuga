@@ -26,15 +26,6 @@ void Menu::createMenu()
 {
     toggleThe = addAction("切换主题");
 
-    // 添加播放音频按钮
-    startPlayAction = addAction("播放音频(测试)");
-
-
-    // 添加WebSocket功能模块按钮
-    socketAction = addAction("Socket(开启)");
-    socketCloseAction = addAction("Socket(关闭)");
-    sendFileAction = addAction("发送文件");
-
     // 连续对话功能按钮
     startExchangeAction = addAction("连续对话(测试)");
 
@@ -51,40 +42,8 @@ void Menu::createMenu()
         toggleTheme();
     });
 
-
-    // 播放音频按钮
-    connect(startPlayAction, &QAction::triggered, this, [this]() {
-        qDebug() << "Play Audio triggered";
-
-        emit startPlay();   // 发射播放音频信号
-    });
-
-
-
-
-    // Socket功能模块按钮
-    connect(socketAction, &QAction::triggered, this, [this]() {
-        SocketManager::getInstance()->setIp("127.0.0.1");
-        SocketManager::getInstance()->setPort(12345);
-        SocketManager::getInstance()->connectToServer();
-
-//        // 5秒后关闭socket连接
-//        QTimer::singleShot(5000, [this]() {
-//            socketManager.disconnectFromServer();
-//        });
-    });
-
-    connect(socketCloseAction, &QAction::triggered, this, [this]() {
-        SocketManager::getInstance()->disconnectFromServer();
-    });
-
-    connect(sendFileAction, &QAction::triggered, this, [this]() {
-        SocketManager::getInstance()->sendWavFile(QString("test.wav"));
-    });
-
-    // TODO 连续对话功能
+    // TODO 连续对话功能,需要优化实现
     connect(startExchangeAction, &QAction::triggered, this, [this]() {
-        // 创建startExchange函数子线程执行
         startExchange();
     });
 

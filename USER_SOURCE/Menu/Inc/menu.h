@@ -35,13 +35,7 @@ signals:
 private:
     void createMenu();
     QAction *toggleThe;         /// 切换主题(全局)
-    QAction *startPlayAction;   /// 开始播放
-    QAction *socketAction;      /// Socket模块测试
-    QAction *socketCloseAction;
-    QAction *sendFileAction;
     QAction *startExchangeAction;   /// 开启对话
-
-
     QAction *settingsAction;    /// 设置
     QAction *closeAction;       /// 关闭
 
